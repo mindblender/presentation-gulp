@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Intro to gulp</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="css/custom.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>gulp</h1>
+					<h3>Intro &amp; How I use gulp</h3>
+					<p>
+						<small><a href="http://jeffsittler.com">Jeff Sittler</a></small>
+					</p>
+				</section>
+
+				<section>
+
+					<h2>gulp is...</h2>
+				    <p class="fragment">Stream-based build system</p>
+				    <p class="fragment">Code over configuration</p>
+				    <p class="fragment">Small, idiomatic Node modules</p>
+				    <p class="fragment">Really simple, elegant API</p>
+
+					<aside class="notes">
+						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+					</aside>
+				</section>
+<section>
+    <h2>Installing gulp</h2>
+    <ol>
+<li>Install gulp globally:</li>
+<li>
+    <pre><code data-trim contenteditable>
+        npm install -g gulp
+    </code></pre>
+</li>
+<li>Install gulp in your project devDependencies:</li>
+<li>
+    <pre><code data-trim contenteditable>
+        npm install --save-dev gulp
+    </code></pre>
+</li>
+<li>Create a gulpfile.js at the root of your project:</li>
+<li>
+    <pre><code data-trim contenteditable>
+var gulp = require('gulp');
+
+gulp.task('default', function() {
+  // place code for your default task here
+});
+    </code></pre>
+</li>
+<li>Run gulp:</li>
+<li>
+    <pre><code data-trim contenteditable>
+        gulp
+    </code></pre>
+</li>
+    </ol>
+</section>
+
+				<section>
+						<h2>Basic gulpfile</h2>
+<pre><code data-trim contenteditable>
+var gulp = require('gulp'),
+    less = require('gulp-less');
+</code></pre>
+<pre class="fragment"><code data-trim contenteditable>
+gulp.task('default', function() {
+    return gulp.src('src/*.less')
+               .pipe(less())
+               .pipe(gulp.dest('public/styles'))
+});
+</code></pre>
+				</section>
+
+                <section>
+				<!-- <section data-background="images/220.gif" data-background-size="80%"> -->
+					<h2>Run it from the terminal</h2>
+<pre><code data-trim contenteditable>
+$ gulp taskname
+</code></pre>
+				</section>
+
+				<section>
+					<h2>Streaming Builds</h2>
+<pre class="fragment"><code data-trim contenteditable>
+gulp.task('default', function() {
+    gulp.src('src/*.less')                // read from FS
+    	// in memory transforms
+        .pipe(less())                     // hand source to module 
+        .pipe(gulp.dest('public/styles')) // write to FS
+});
+</code></pre>
+				</section>
+
+				<section>
+					<h2>Streams?</h2>
+					<p class="fragment">Read the <a href="https://github.com/substack/stream-handbook">Stream Handbook</a></p>
+					<div class="fragment">
+						<img src="http://markdalgleish.github.io/presentation-build-wars-gulp-vs-grunt/images/substack.png" class="avatar avatar-small" />
+						<p>by <a href="https://twitter.com/substack"> @substack</a></p>
+					</div>
+				</section>
+
+				<section>
+			        <blockquote>best part about <a href="https://twitter.com/gulpjs">@gulpjs</a> is that people are writing generic, streaming node modules that have nothing to do w/ gulp except the module name :)</blockquote><br>
+			        <p><a href="https://twitter.com/maxogden">@maxogden</a></p>
+				</section>
+
+				<section data-background="images/clap.gif" data-background-size="60%">
+					<h2>Let's learn the gulp api</h2>
+					<p>It's not too hard</p>
+				</section>
+
+				<section>
+					<h2>gulp.task</h2>
+<pre class="fragment"><code data-trim contenteditable>
+gulp.task('name', ['deps'] ,function(callback) {
+    return stream | promise;
+    // or, call callback()
+});						
+</code></pre>
+				</section>
+
+				<section>
+					<h2>gulp.watch</h2>
+<pre class="fragment"><code data-trim contenteditable>
+gulp.watch('src/**/*.js', ['test', 'compile']);
+</code></pre>
+				</section>
+
+				<section>
+					<h2>gulp.src</h2>
+					<p>returns a readable stream</p>
+<pre class="fragment"><code data-trim contenteditable>
+gulp.src(['src/**/*.js', 'test/spec/**/*.js'])
+</code></pre>
+				</section>
+
+				<section>
+					<h2>gulp.dest</h2>
+					<p>returns a "through stream"</p>
+<pre class="fragment"><code data-trim contenteditable>
+gulp.src('src')
+    .pipe(...)
+    .pipe(gulp.dest('dist'));
+</code></pre>
+					<p class="fragment">Yes, that means that you can keep on piping!</p>
+					<p class="fragment"><small>Think of jQuery piping</small></p>
+				</section>
+
+				<section data-background="images/say-what.gif" data-background-size="80%">
+			        <h2>task, watch, src, dest</h2>
+			        <h1 class="fragment">That's it.</h1>
+				</section>
+
+<section>
+	<h2>But...</h2>
+	<h3>How do you run all the tasks sequentially?</h3>
+</section>
+
+<section data-background="images/a3L1H.gif">
+	<h1>wrong<br />question</h1>
+</section>
+
+<section class="gif gif--orchestrator bespoke-slide bespoke-active" style="zoom: 1.4229166666666666;">
+    <h2>Gulp uses <a href="https://github.com/robrich/orchestrator">Orchestrator</a></h2>
+    <p class="fragment">Just specify task dependencies</p>
+    <p class="fragment">Tasks run with maximum concurrency*</p>
+</section>
+
+<section data-background="images/220.gif" data-background-size="80%">
+	<h2>That's it?</h2>
+	<p>yep, pretty much</p>
+</section>
+
+<section>
+	<p>additional resources</p>
+	<ul class="no-list">
+		<li><a href="https://github.com/gulpjs/gulp/blob/master/docs/API.md">gulp api</a></li>
+		<li><a href="http://travismaynard.com/writing/getting-started-with-gulp">Getting started with gulp</a></li>
+		<li><a href="http://gulpjs.com/plugins/">List of available plugins</a></li>
+	</ul>
+</section>
+
+<section>
+	<section>
+		<h2>Grunt vs gulp (code comparison)*</h2>
+		<p><small><a href="http://www.shaundunne.com/gulp-is-the-new-black/">http://www.shaundunne.com/gulp-is-the-new-black/</a></small></p>
+		<p><small class="x-small">*I know nothing about Grunt, so just snagged this from the web</small></p>
+	</section>
+	<section>
+		<p>gruntfile</p>
+		<pre><code data-trim contenteditable>
+var gruntConfig = function(grunt) {
+
+  //This will load in all the grunt plugins that have a grunt- prefix
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+
+  //Grunt config setup
+  var cfg = {
+
+    watch: {
+      php: {
+        files: ['**/*.php'],
+        options: {
+          livereload: true
+        }
+      },
+
+      html: {
+        files: ['**/*.html'],
+        options: {
+          livereload:true
+        }
+      },
+
+      styl: {
+        files: ['assets/stylus/*.styl'],
+        tasks: ['stylus'],
+        options:{
+          livereload:true
+        }
+      },
+
+      js: {
+        files: ['assets/js/*.js'],
+        options:{
+          livereload:true
+        }
+      }
+    },
+
+    stylus: {
+      compile: {
+        files: {
+          'assets/css/main.css': 'assets/stylus/main.styl'
+        }
+      }
+    }
+
+  };
+  // End cfg
+  grunt.initConfig(cfg);
+
+  //Tasks
+  grunt.registerTask('dev', [
+    'stylus',
+    'watch'
+  ]);
+
+};
+
+module.exports = gruntConfig;
+		</code></pre>
+	</section>
+
+	<section>
+		<p>gulpfile</p>
+		<pre><code data-trim contenteditable>
+var gulp = require('gulp');  
+var stylus = require('gulp-stylus');  
+var refresh = require('gulp-livereload');  
+var lr = require('tiny-lr');  
+var server = lr();
+
+gulp.task('stylus', function(){  
+    gulp.src('assets/stylus/main.styl')
+    .pipe(stylus({
+        use: ['nib'],
+        compress: true
+    }))
+    .pipe(gulp.dest('assets/css'))
+    .pipe(refresh(server))
+});
+
+gulp.task('js', function(){  
+    gulp.src('assets/js/*.js')
+    .pipe(refresh(server));
+})
+
+gulp.task('php', function(){  
+    gulp.src('*.php')
+    .pipe(refresh(server));
+})
+
+gulp.task('livereload', function(){  
+    server.listen(35729, function(err){
+        if(err) return console.log(err);
+    });
+});
+
+gulp.task('dev', function(){
+
+  gulp.run('livereload', 'stylus');
+
+  gulp.watch('assets/stylus/**' , function(ev){
+        gulp.run('stylus')
+    });
+
+    gulp.watch('assets/js/*.js', function(ev){
+        gulp.run('js')
+    });
+
+    gulp.watch('*.php', function(ev){
+        gulp.run('php')
+    });
+
+});
+		</code></pre>
+	</section>
+</section>
+
+<section>
+	<section>
+		<h2>Ok, so big deal?</h2>
+		<p>Why I chose to use gulp</p>
+	</section>
+	<section data-background="images/Ludicrous-Speed.gif">
+		<h2 style="margin-top: 150px;">It is fast</h2>
+		<p>most of the time, tasks complete in <span class="callout">microseconds</span>!</p>
+		<img src="images/example_output.png" style="opacity: 0.7;">
+	</section>
+
+	<section>
+		<h2>It is easy to use</h2>
+		<ul>
+			<li style="margin:.5em;">flexible</li>
+			<li style="margin:.5em;">easy learning curve</li>
+			<li style="margin:.5em;">expandable - lot of existing plugins, makes it easy to integrate and accomplish tasks</li>
+		</ul>
+	</section>
+<!-- 	<ul class="no-list">
+		<li></li>
+		<li>I found it easier to read</li>
+		<li>I liked how things flowed together</li> -->
+</section>
+
+<section>
+	<h2>examples</h2>
+</section>
+
+
+				<section>
+					<h2>Thank you!</h2>
+					<p>
+						<img src="images/mindblender.png" class="avatar avatar-small" />
+					</p>
+					<p>
+						<small><a href="http://jeffsittler.com">Jeff Sittler</a></small>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
